@@ -1,0 +1,346 @@
+loading train data... 144903890 184903890
+loading test data...
+Extracting new features...
+selcols ['ip', 'app', 'device', 'os'] QQ NC
+variables and data type: 
+<class 'pandas.core.frame.DataFrame'>
+Int64Index: 58790469 entries, 0 to 18790468
+Data columns (total 10 columns):
+app                    uint16
+channel                uint16
+click_id               float64
+click_time             int32
+device                 uint16
+ip                     uint32
+is_attributed          float64
+os                     uint16
+hour                   uint8
+ip_app_device_os_NC    float32
+dtypes: float32(1), float64(2), int32(1), uint16(4), uint32(1), uint8(1)
+memory usage: 2.5 GB
+predictors ['ip_app_device_os_NC', 'ip', 'app', 'device', 'os', 'channel', 'hour']
+train size:  37500000
+valid size:  2500000
+test size :  18790469
+Training...
+preparing validation datasets
+Training until validation scores don't improve for 30 rounds.
+[10]	train's auc: 0.965397	valid's auc: 0.972202
+[20]	train's auc: 0.971844	valid's auc: 0.977435
+[30]	train's auc: 0.974509	valid's auc: 0.979828
+[40]	train's auc: 0.975689	valid's auc: 0.981096
+[50]	train's auc: 0.976534	valid's auc: 0.982348
+[60]	train's auc: 0.977295	valid's auc: 0.982954
+[70]	train's auc: 0.977831	valid's auc: 0.983466
+[80]	train's auc: 0.978256	valid's auc: 0.983881
+[90]	train's auc: 0.97854	valid's auc: 0.984113
+[100]	train's auc: 0.978776	valid's auc: 0.984278
+[110]	train's auc: 0.979008	valid's auc: 0.984395
+[120]	train's auc: 0.979216	valid's auc: 0.984596
+[130]	train's auc: 0.97955	valid's auc: 0.985109
+[140]	train's auc: 0.979712	valid's auc: 0.985269
+[150]	train's auc: 0.979851	valid's auc: 0.985279
+[160]	train's auc: 0.979981	valid's auc: 0.985391
+[170]	train's auc: 0.980121	valid's auc: 0.985403
+[180]	train's auc: 0.98028	valid's auc: 0.98558
+[190]	train's auc: 0.980407	valid's auc: 0.985562
+[200]	train's auc: 0.98051	valid's auc: 0.985558
+Early stopping, best iteration is:
+[179]	train's auc: 0.980268	valid's auc: 0.985596
+
+Model Report
+bst1.best_iteration:  179
+auc: 0.9855958064556426
+[1492.991711139679]: model training time
+Plot feature importances...
+Predicting...
+writing...
+done...
+loading train data... 144903890 184903890
+loading test data...
+Extracting new features...
+selcols ['ip', 'app', 'device', 'os'] QQ NC
+selcols ['device', 'os'] QQ NC
+variables and data type: 
+<class 'pandas.core.frame.DataFrame'>
+Int64Index: 58790469 entries, 0 to 18790468
+Data columns (total 11 columns):
+app                    uint16
+channel                uint16
+click_id               float64
+click_time             int32
+device                 uint16
+ip                     uint32
+is_attributed          float64
+os                     uint16
+hour                   uint8
+ip_app_device_os_NC    float32
+device_os_NC           float32
+dtypes: float32(2), float64(2), int32(1), uint16(4), uint32(1), uint8(1)
+memory usage: 2.7 GB
+predictors ['ip_app_device_os_NC', 'device_os_NC', 'ip', 'app', 'device', 'os', 'channel', 'hour']
+train size:  37500000
+valid size:  2500000
+test size :  18790469
+Training...
+preparing validation datasets
+Training until validation scores don't improve for 30 rounds.
+[10]	train's auc: 0.967148	valid's auc: 0.974192
+[20]	train's auc: 0.972511	valid's auc: 0.978696
+[30]	train's auc: 0.974889	valid's auc: 0.980647
+[40]	train's auc: 0.976114	valid's auc: 0.982229
+[50]	train's auc: 0.976981	valid's auc: 0.983146
+[60]	train's auc: 0.97757	valid's auc: 0.983539
+[70]	train's auc: 0.978013	valid's auc: 0.983987
+[80]	train's auc: 0.978384	valid's auc: 0.984135
+[90]	train's auc: 0.978681	valid's auc: 0.984468
+[100]	train's auc: 0.978971	valid's auc: 0.984764
+[110]	train's auc: 0.979185	valid's auc: 0.984856
+[120]	train's auc: 0.979356	valid's auc: 0.984972
+[130]	train's auc: 0.97962	valid's auc: 0.985377
+[140]	train's auc: 0.979777	valid's auc: 0.985463
+[150]	train's auc: 0.980012	valid's auc: 0.985697
+[160]	train's auc: 0.980139	valid's auc: 0.985696
+[170]	train's auc: 0.98026	valid's auc: 0.985772
+[180]	train's auc: 0.980399	valid's auc: 0.98586
+[190]	train's auc: 0.980484	valid's auc: 0.985895
+[200]	train's auc: 0.980579	valid's auc: 0.985869
+[210]	train's auc: 0.980677	valid's auc: 0.985908
+[220]	train's auc: 0.980758	valid's auc: 0.985918
+[230]	train's auc: 0.980825	valid's auc: 0.985835
+[240]	train's auc: 0.980912	valid's auc: 0.985828
+Early stopping, best iteration is:
+[219]	train's auc: 0.980747	valid's auc: 0.985938
+
+Model Report
+bst1.best_iteration:  219
+auc: 0.9859375973835052
+[1865.4429366588593]: model training time
+Plot feature importances...
+Predicting...
+writing...
+done...
+loading train data... 144903890 184903890
+loading test data...
+Extracting new features...
+selcols ['ip', 'device', 'os', 'app'] QQ 4
+selcols ['ip', 'app', 'device', 'os'] QQ NC
+selcols ['device', 'os'] QQ NC
+variables and data type: 
+<class 'pandas.core.frame.DataFrame'>
+Int64Index: 58790469 entries, 0 to 58790468
+Data columns (total 12 columns):
+app                    uint16
+channel                uint16
+click_id               float64
+click_time             int32
+device                 uint16
+ip                     uint32
+is_attributed          float64
+os                     uint16
+hour                   uint8
+ip_device_os_app_4     int64
+ip_app_device_os_NC    float32
+device_os_NC           float32
+dtypes: float32(2), float64(2), int32(1), int64(1), uint16(4), uint32(1), uint8(1)
+memory usage: 3.1 GB
+predictors ['ip_device_os_app_4', 'ip_app_device_os_NC', 'device_os_NC', 'ip', 'app', 'device', 'os', 'channel', 'hour']
+train size:  37500000
+valid size:  2500000
+test size :  18790469
+Training...
+preparing validation datasets
+Training until validation scores don't improve for 30 rounds.
+[10]	train's auc: 0.966592	valid's auc: 0.972283
+[20]	train's auc: 0.973384	valid's auc: 0.979616
+[30]	train's auc: 0.976363	valid's auc: 0.981685
+[40]	train's auc: 0.97778	valid's auc: 0.983511
+[50]	train's auc: 0.978733	valid's auc: 0.984684
+[60]	train's auc: 0.979412	valid's auc: 0.985059
+[70]	train's auc: 0.97985	valid's auc: 0.985394
+[80]	train's auc: 0.980192	valid's auc: 0.985701
+[90]	train's auc: 0.980475	valid's auc: 0.985945
+[100]	train's auc: 0.98076	valid's auc: 0.986358
+[110]	train's auc: 0.980981	valid's auc: 0.986515
+[120]	train's auc: 0.981173	valid's auc: 0.986553
+[130]	train's auc: 0.981333	valid's auc: 0.986606
+[140]	train's auc: 0.981502	valid's auc: 0.986666
+[150]	train's auc: 0.981656	valid's auc: 0.986794
+[160]	train's auc: 0.981779	valid's auc: 0.987002
+[170]	train's auc: 0.981916	valid's auc: 0.987084
+[180]	train's auc: 0.982052	valid's auc: 0.987208
+[190]	train's auc: 0.982162	valid's auc: 0.987265
+[200]	train's auc: 0.98225	valid's auc: 0.987242
+[210]	train's auc: 0.982362	valid's auc: 0.987317
+[220]	train's auc: 0.982463	valid's auc: 0.98732
+[230]	train's auc: 0.982526	valid's auc: 0.987302
+[240]	train's auc: 0.982607	valid's auc: 0.987334
+[250]	train's auc: 0.98268	valid's auc: 0.987371
+[260]	train's auc: 0.982768	valid's auc: 0.987331
+[270]	train's auc: 0.982824	valid's auc: 0.987334
+Early stopping, best iteration is:
+[249]	train's auc: 0.982671	valid's auc: 0.987376
+
+Model Report
+bst1.best_iteration:  249
+auc: 0.9873760356227431
+[2130.24520277977]: model training time
+Plot feature importances...
+Predicting...
+writing...
+done...
+loading train data... 144903890 184903890
+loading test data...
+Extracting new features...
+selcols ['ip', 'channel'] QQ 4
+selcols ['ip', 'device', 'os', 'app'] QQ 4
+selcols ['ip', 'app', 'device', 'os'] QQ NC
+selcols ['device', 'os'] QQ NC
+variables and data type: 
+<class 'pandas.core.frame.DataFrame'>
+Int64Index: 58790469 entries, 0 to 58790468
+Data columns (total 13 columns):
+app                    uint16
+channel                uint16
+click_id               float64
+click_time             int32
+device                 uint16
+ip                     uint32
+is_attributed          float64
+os                     uint16
+hour                   uint8
+ip_channel_4           int64
+ip_device_os_app_4     int64
+ip_app_device_os_NC    float32
+device_os_NC           float32
+dtypes: float32(2), float64(2), int32(1), int64(2), uint16(4), uint32(1), uint8(1)
+memory usage: 3.6 GB
+predictors ['ip_channel_4', 'ip_device_os_app_4', 'ip_app_device_os_NC', 'device_os_NC', 'ip', 'app', 'device', 'os', 'channel', 'hour']/home/guohuajiaohuazi/anaconda3/lib/python3.6/site-packages/sklearn/cross_validation.py:41: DeprecationWarning: This module was deprecated in version 0.18 in favor of the model_selection module into which all the refactored classes and functions are moved. Also note that the interface of the new CV iterators are different from that of this module. This module will be removed in 0.20.
+  "This module will be removed in 0.20.", DeprecationWarning)
+/home/guohuajiaohuazi/anaconda3/lib/python3.6/site-packages/lightgbm/basic.py:1036: UserWarning: Using categorical_feature in Dataset.
+  warnings.warn('Using categorical_feature in Dataset.')
+/home/guohuajiaohuazi/anaconda3/lib/python3.6/site-packages/lightgbm/basic.py:681: UserWarning: categorical_feature in param dict is overrided.
+  warnings.warn('categorical_feature in param dict is overrided.')
+
+train size:  37500000
+valid size:  2500000
+test size :  18790469
+Training...
+preparing validation datasets
+Training until validation scores don't improve for 30 rounds.
+[10]	train's auc: 0.967504	valid's auc: 0.974359
+[20]	train's auc: 0.974727	valid's auc: 0.980643
+[30]	train's auc: 0.977632	valid's auc: 0.983231
+[40]	train's auc: 0.979135	valid's auc: 0.98468
+[50]	train's auc: 0.980104	valid's auc: 0.986127
+[60]	train's auc: 0.980729	valid's auc: 0.986675
+[70]	train's auc: 0.981183	valid's auc: 0.987061
+[80]	train's auc: 0.981615	valid's auc: 0.987406
+[90]	train's auc: 0.981913	valid's auc: 0.987602
+[100]	train's auc: 0.98216	valid's auc: 0.987655
+[110]	train's auc: 0.982331	valid's auc: 0.987859
+[120]	train's auc: 0.982541	valid's auc: 0.988071
+[130]	train's auc: 0.982726	valid's auc: 0.988016
+[140]	train's auc: 0.982885	valid's auc: 0.988153
+[150]	train's auc: 0.982984	valid's auc: 0.988232
+[160]	train's auc: 0.983098	valid's auc: 0.988207
+[170]	train's auc: 0.983227	valid's auc: 0.988221
+[180]	train's auc: 0.983327	valid's auc: 0.988288
+[190]	train's auc: 0.983434	valid's auc: 0.988381
+[200]	train's auc: 0.983513	valid's auc: 0.988382
+[210]	train's auc: 0.983623	valid's auc: 0.988469
+[220]	train's auc: 0.983713	valid's auc: 0.988526
+[230]	train's auc: 0.983794	valid's auc: 0.988597
+[240]	train's auc: 0.983864	valid's auc: 0.988645
+[250]	train's auc: 0.983934	valid's auc: 0.988674
+[260]	train's auc: 0.984008	valid's auc: 0.988688
+[270]	train's auc: 0.984072	valid's auc: 0.988647
+[280]	train's auc: 0.984126	valid's auc: 0.988685
+[290]	train's auc: 0.984178	valid's auc: 0.988683
+[300]	train's auc: 0.984224	valid's auc: 0.988742
+[310]	train's auc: 0.984277	valid's auc: 0.988725
+[320]	train's auc: 0.984329	valid's auc: 0.988701
+[330]	train's auc: 0.984386	valid's auc: 0.988799
+[340]	train's auc: 0.984429	valid's auc: 0.988818
+[350]	train's auc: 0.984475	valid's auc: 0.98881
+[360]	train's auc: 0.984515	valid's auc: 0.988731
+[370]	train's auc: 0.984561	valid's auc: 0.988749
+Early stopping, best iteration is:
+[342]	train's auc: 0.984431	valid's auc: 0.988837
+
+Model Report
+bst1.best_iteration:  342
+auc: 0.9888369474720017
+[2945.1506960392]: model training time
+Plot feature importances...
+Predicting...
+writing...
+done...
+loading train data... 144903890 184903890
+loading test data...
+Extracting new features...
+selcols ['ip', 'channel'] QQ 4
+selcols ['app', 'channel'] QQ 4
+selcols ['ip', 'device', 'os', 'app'] QQ 4
+selcols ['ip', 'app', 'device', 'os'] QQ NC
+selcols ['device', 'os'] QQ NC
+variables and data type: 
+<class 'pandas.core.frame.DataFrame'>
+Int64Index: 58790469 entries, 0 to 58790468
+Data columns (total 14 columns):
+app                    uint16
+channel                uint16
+click_id               float64
+click_time             int32
+device                 uint16
+ip                     uint32
+is_attributed          float64
+os                     uint16
+hour                   uint8
+ip_channel_4           int64
+app_channel_4          int64
+ip_device_os_app_4     int64
+ip_app_device_os_NC    float32
+device_os_NC           float32
+dtypes: float32(2), float64(2), int32(1), int64(3), uint16(4), uint32(1), uint8(1)
+memory usage: 4.0 GB
+predictors ['ip_channel_4', 'app_channel_4', 'ip_device_os_app_4', 'ip_app_device_os_NC', 'device_os_NC', 'ip', 'app', 'device', 'os', 'channel', 'hour']
+train size:  37500000
+valid size:  2500000
+test size :  18790469
+Training...
+preparing validation datasets
+Training until validation scores don't improve for 30 rounds.
+[10]	train's auc: 0.967046	valid's auc: 0.973048
+[20]	train's auc: 0.974298	valid's auc: 0.97996
+[30]	train's auc: 0.977937	valid's auc: 0.983489
+[40]	train's auc: 0.979231	valid's auc: 0.984639
+[50]	train's auc: 0.980185	valid's auc: 0.9859
+[60]	train's auc: 0.980731	valid's auc: 0.986331
+[70]	train's auc: 0.98124	valid's auc: 0.986931
+[80]	train's auc: 0.981618	valid's auc: 0.987144
+[90]	train's auc: 0.981909	valid's auc: 0.987229
+[100]	train's auc: 0.982174	valid's auc: 0.987522
+[110]	train's auc: 0.982386	valid's auc: 0.987689
+[120]	train's auc: 0.982602	valid's auc: 0.987915
+[130]	train's auc: 0.982804	valid's auc: 0.988077
+[140]	train's auc: 0.982958	valid's auc: 0.988205
+[150]	train's auc: 0.983107	valid's auc: 0.988354
+[160]	train's auc: 0.983221	valid's auc: 0.988405
+[170]	train's auc: 0.98333	valid's auc: 0.988417
+[180]	train's auc: 0.983433	valid's auc: 0.988452
+[190]	train's auc: 0.983533	valid's auc: 0.988472
+[200]	train's auc: 0.983609	valid's auc: 0.98846
+[210]	train's auc: 0.98369	valid's auc: 0.988447
+[220]	train's auc: 0.983806	valid's auc: 0.988451
+Early stopping, best iteration is:
+[195]	train's auc: 0.983576	valid's auc: 0.988475
+
+Model Report
+bst1.best_iteration:  195
+auc: 0.9884754507423248
+[1799.3136134147644]: model training time
+Plot feature importances...
+Predicting...
+writing...
+done...

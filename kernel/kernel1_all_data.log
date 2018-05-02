@@ -1,0 +1,170 @@
+loading train data... 4903890 184903890
+loading test data...
+Extracting new features...
+grouping by ip-day-hour combination...
+grouping by ip-app combination...
+grouping by ip-app-os combination...
+grouping by : ip_day_chl_var_hour
+grouping by : ip_app_os_var_hour
+grouping by : ip_app_channel_var_day
+grouping by : ip_app_chl_mean_hour
+merging...
+selcols ['ip', 'channel'] QQ 4
+selcols ['ip', 'device', 'os', 'app'] QQ 5
+selcols ['ip', 'day', 'hour'] QQ 4
+selcols ['ip', 'app'] QQ 4
+selcols ['ip', 'app', 'os'] QQ 4
+selcols ['ip', 'device'] QQ 4
+selcols ['app', 'channel'] QQ 4
+selcols ['ip', 'os'] QQ 5
+selcols ['ip', 'device', 'os', 'app'] QQ 4
+doing nextClick
+loading from save file
+vars and data type: 
+<class 'pandas.core.frame.DataFrame'>
+Int64Index: 198790469 entries, 0 to 198790468
+Data columns (total 28 columns):
+app                         uint16
+channel                     uint16
+click_id                    float64
+click_time                  datetime64[ns]
+device                      uint16
+ip                          uint32
+is_attributed               float64
+os                          uint16
+hour                        uint8
+day                         uint8
+ip_tcount                   int64
+ip_app_count                int64
+ip_app_os_count             int64
+ip_tchan_count              float64
+ip_app_os_var               float64
+ip_app_channel_var_day      float64
+ip_app_channel_mean_hour    float64
+X0                          int64
+X1                          int64
+X2                          int64
+X3                          int64
+X4                          int64
+X5                          int64
+X6                          int64
+X7                          int64
+X8                          int64
+nextClick                   int64
+nextClick_shift             float64
+dtypes: datetime64[ns](1), float64(7), int64(13), uint16(4), uint32(1), uint8(2)
+memory usage: 35.2 GB
+predictors ['nextClick', 'nextClick_shift', 'app', 'device', 'os', 'channel', 'hour', 'day', 'ip_tcount', 'ip_tchan_count', 'ip_app_count', 'ip_app_os_count', 'ip_app_os_var', 'ip_app_channel_var_day', 'ip_app_channel_mean_hour', 'X0', 'X1', 'X2', 'X3', 'X4', 'X5', 'X6', 'X7', 'X8']
+train size:  155000000
+valid size:  25000000
+test size :  18790469
+Training...
+preparing validation datasets
+Training until validation scores don't improve for 30 rounds.
+[10]	train's auc: 0.966807	valid's auc: 0.962613
+[20]	train's auc: 0.971863	valid's auc: 0.967509
+[30]	train's auc: 0.973795	valid's auc: 0.969828
+[40]	train's auc: 0.975841	valid's auc: 0.972456
+[50]	train's auc: 0.977383	valid's auc: 0.974471
+[60]	train's auc: 0.978808	valid's auc: 0.976372
+[70]	train's auc: 0.979717	valid's auc: 0.977632
+[80]	train's auc: 0.980445	valid's auc: 0.978612
+[90]	train's auc: 0.980965	valid's auc: 0.979322
+[100]	train's auc: 0.981442	valid's auc: 0.979943
+[110]	train's auc: 0.981786	valid's auc: 0.98041
+[120]	train's auc: 0.982037	valid's auc: 0.980736
+[130]	train's auc: 0.982302	valid's auc: 0.981075
+[140]	train's auc: 0.982533	valid's auc: 0.981444
+[150]	train's auc: 0.982722	valid's auc: 0.981661
+[160]	train's auc: 0.98287	valid's auc: 0.981865
+[170]	train's auc: 0.983032	valid's auc: 0.982057
+[180]	train's auc: 0.983148	valid's auc: 0.982209
+[190]	train's auc: 0.983279	valid's auc: 0.982352
+[200]	train's auc: 0.983387	valid's auc: 0.982469
+[210]	train's auc: 0.983479	valid's auc: 0.982551
+[220]	train's auc: 0.98357	valid's auc: 0.982647
+[230]	train's auc: 0.983654	valid's auc: 0.982732
+[240]	train's auc: 0.983734	valid's auc: 0.982823
+[250]	train's auc: 0.983809	valid's auc: 0.982891
+[260]	train's auc: 0.98389	valid's auc: 0.98297
+[270]	train's auc: 0.983968	valid's auc: 0.983045
+[280]	train's auc: 0.984026	valid's auc: 0.983083
+[290]	train's auc: 0.984093	valid's auc: 0.983134
+[300]	train's auc: 0.984144	valid's auc: 0.983186
+[310]	train's auc: 0.984197	valid's auc: 0.983234
+[320]	train's auc: 0.98425	valid's auc: 0.983294
+[330]	train's auc: 0.98431	valid's auc: 0.983346
+[340]	train's auc: 0.984363	valid's auc: 0.983394
+[350]	train's auc: 0.98441	valid's auc: 0.983439
+[360]	train's auc: 0.984456	valid's auc: 0.983481
+[370]	train's auc: 0.984499	valid's auc: 0.983532
+[380]	train's auc: 0.984536	valid's auc: 0.983549
+[390]	train's auc: 0.984582	valid's auc: 0.983595
+[400]	train's auc: 0.984623	valid's auc: 0.983614
+[410]	train's auc: 0.984661	valid's auc: 0.983642
+[420]	train's auc: 0.984703	valid's auc: 0.983664
+[430]	train's auc: 0.984732	valid's auc: 0.983672
+[440]	train's auc: 0.984764	valid's auc: 0.983696
+[450]	train's auc: 0.984795	valid's auc: 0.983713
+[460]	train's auc: 0.984826	valid's auc: 0.983734
+[470]	train's auc: 0.98486	valid's auc: 0.983761
+[480]	train's auc: 0.984886	valid's auc: 0.983771
+[490]	train's auc: 0.984918	valid's auc: 0.983794
+[500]	train's auc: 0.984947	valid's auc: 0.983829
+[510]	train's auc: 0.984979	valid's auc: 0.983844
+[520]	train's auc: 0.985006	valid's auc: 0.983857
+[530]	train's auc: 0.985039	valid's auc: 0.983868
+[540]	train's auc: 0.985062	valid's auc: 0.983893
+[550]	train's auc: 0.985089	valid's auc: 0.98391
+[560]	train's auc: 0.98511	valid's auc: 0.983918
+[570]	train's auc: 0.985138	valid's auc: 0.983935
+[580]	train's auc: 0.985162	valid's auc: 0.983957
+[590]	train's auc: 0.985183	valid's auc: 0.983971
+[600]	train's auc: 0.985201	valid's auc: 0.983986
+[610]	train's auc: 0.985223	valid's auc: 0.984004
+[620]	train's auc: 0.985246	valid's auc: 0.984016
+[630]	train's auc: 0.985268	valid's auc: 0.984019
+[640]	train's auc: 0.985296	valid's auc: 0.984027
+[650]	train's auc: 0.985315	valid's auc: 0.984043
+[660]	train's auc: 0.985331	valid's auc: 0.984054
+[670]	train's auc: 0.985352	valid's auc: 0.98405
+[680]	train's auc: 0.985376	valid's auc: 0.984069
+[690]	train's auc: 0.985396	valid's auc: 0.984073
+[700]	train's auc: 0.985412	valid's auc: 0.984086
+[710]	train's auc: 0.985429	valid's auc: 0.984091
+[720]	train's auc: 0.985447	valid's auc: 0.984095
+[730]	train's auc: 0.985461	valid's auc: 0.984094
+[740]	train's auc: 0.985479	valid's auc: 0.984096
+[750]	train's auc: 0.985494	valid's auc: 0.984096
+[760]	train's auc: 0.985508	valid's auc: 0.984105
+[770]	train's auc: 0.985524	valid's auc: 0.984103
+[780]	train's auc: 0.985539	valid's auc: 0.984108
+[790]	train's auc: 0.985554	valid's auc: 0.984116
+[800]	train's auc: 0.985571	valid's auc: 0.984119
+[810]	train's auc: 0.985586	valid's auc: 0.984124
+[820]	train's auc: 0.9856	valid's auc: 0.984126
+[830]	train's auc: 0.985615	valid's auc: 0.984123
+[840]	train's auc: 0.985626	valid's auc: 0.984134
+[850]	train's auc: 0.98564	valid's auc: 0.984138
+[860]	train's auc: 0.985656	valid's auc: 0.984143
+[870]	train's auc: 0.985667	valid's auc: 0.984144
+[880]	train's auc: 0.985679	valid's auc: 0.984144
+[890]	train's auc: 0.985695	valid's auc: 0.984154
+[900]	train's auc: 0.985707	valid's auc: 0.984158
+[910]	train's auc: 0.98572	valid's auc: 0.984165
+[920]	train's auc: 0.985735	valid's auc: 0.984177
+[930]	train's auc: 0.985745	valid's auc: 0.984189
+[940]	train's auc: 0.985753	valid's auc: 0.984185
+[950]	train's auc: 0.985765	valid's auc: 0.984184
+[960]	train's auc: 0.985777	valid's auc: 0.984189
+Early stopping, best iteration is:
+[932]	train's auc: 0.985746	valid's auc: 0.98419
+
+Model Report
+bst1.best_iteration:  932
+auc: 0.9841904003528424
+[56005.736334085464]: model training time
+Plot feature importances...
+Predicting...
+writing...
+done...
