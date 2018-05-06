@@ -285,20 +285,20 @@ def DO(frm,to,fileno):
         data = do_next_Click( data,agg_suffix='nextClick', agg_type='float32'  ); gc.collect()
         data = do_prev_Click( data,agg_suffix='prevClick', agg_type='float32'  ); gc.collect()  ## Removed temporarily due RAM sortage. 
         
-        data = do_countuniq( data, ['ip'], 'channel' ); gc.collect()
+        data = do_countuniq( data, ['day', 'ip'], 'channel' ); gc.collect()
         print('data columns', data.columns)
-        data = do_countuniq( data, ['ip', 'device', 'os'], 'app'); gc.collect()
-        data = do_countuniq( data, ['ip', 'day'], 'hour' ); gc.collect()
-        data = do_countuniq( data, ['ip'], 'app'); gc.collect()
-        data = do_countuniq( data, ['ip', 'app'], 'os'); gc.collect()
-        data = do_countuniq( data, ['ip'], 'device'); gc.collect()
-        data = do_countuniq( data, ['app'], 'channel'); gc.collect()
-        data = do_cumcount( data, ['ip'], 'os'); gc.collect()
-        data = do_cumcount( data, ['ip', 'device', 'os'], 'app'); gc.collect()
-        data = do_count( data, ['ip', 'day', 'hour'] ); gc.collect()
-        data = do_count( data, ['ip', 'app']); gc.collect()
-        data = do_count( data, ['ip', 'app', 'os']); gc.collect()
-        data = do_var( data, ['ip', 'app', 'os'], 'hour'); gc.collect()
+        data = do_countuniq( data, ['day','ip', 'device', 'os'], 'app'); gc.collect()
+        data = do_countuniq( data, ['day','ip', 'day'], 'hour' ); gc.collect()
+        data = do_countuniq( data, ['day','ip'], 'app'); gc.collect()
+        data = do_countuniq( data, ['day','ip', 'app'], 'os'); gc.collect()
+        data = do_countuniq( data, ['day','ip'], 'device'); gc.collect()
+        data = do_countuniq( data, ['day','app'], 'channel'); gc.collect()
+        data = do_cumcount( data, ['day','ip'], 'os'); gc.collect()
+        data = do_cumcount( data, ['day','ip', 'device', 'os'], 'app'); gc.collect()
+        data = do_count( data, ['day','ip', 'day', 'hour'] ); gc.collect()
+        data = do_count( data, ['day','ip', 'app']); gc.collect()
+        data = do_count( data, ['day','ip', 'app', 'os']); gc.collect()
+        data = do_var( data, ['day','ip', 'app', 'os'], 'hour'); gc.collect()
 
         del data['day']
         gc.collect()
@@ -330,8 +330,10 @@ def DO(frm,to,fileno):
         test_df = test_df.iloc[relation.old_click_id]
         del relation
     
-    val_df = train_df[(len_train-val_size):]
-    train_df = train_df[:(len_train-val_size)]
+    # val_df = train_df[(len_train-val_size):]
+    # train_df = train_df[:(len_train-val_size)]
+    val_df = train_df[train_df.day == 9]
+    train_df = train_df[(train_df.day == 7) | (train_df.day == 8)]    
 
     print("\ntrain size: ", len(train_df))
     print("\nvalid size: ", len(val_df))
@@ -390,13 +392,14 @@ def DO(frm,to,fileno):
     sub['is_attributed'] = bst.predict(test_df[predictors],num_iteration=best_iteration)
 #     if not debug:
 #         print("writing...")
+    sub.click_id = sub.index
     sub.to_csv('sub_it%d.csv'%(fileno),index=False,float_format='%.9f')
     print("done...")
     return sub
 
 
-FILENO= 34 #To distinguish the output file name3
-debug, gcloud = [0, 1]  #Whethere or not in debuging mode    
+# FILENO= 34 #To distinguish the output file name3
+debug, gcloud, FILENO = [0, 1, 35]  #Whethere or not in debuging mode    
 
 
 
@@ -427,12 +430,12 @@ else:
     test_nrows = 18790470
     val_size = 25000000
     # nchunk = 40000000
-    nchunk = 100000000 #from 78000000
+    # nchunk = 100000000 #from 78000000
     # frm = nrows - nchunk   
 
-    frm=nrows-(nchunk + val_size)
+    frm=0
 
-to = frm + nchunk
-
+# to = frm + nchunk
+to = nrows
 
 sub=DO(frm,to,FILENO)

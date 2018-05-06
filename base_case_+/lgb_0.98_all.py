@@ -99,7 +99,7 @@ def do_count( df, group_cols, agg_type='uint32', show_max=False, show_agg=True )
     if show_agg:
         print( "\nAggregating by ", group_cols ,  '... and saved in', agg_name )
     gp = df[group_cols][group_cols].groupby(group_cols).size().rename(agg_name).to_frame().reset_index()
-    df = df.merge(gp, on=group_cols, how='left')
+    df = df.merge(gp, on=group_cols, how='left', copy=False)
     del gp
     if show_max:
         print( agg_name + " max value = ", df[agg_name].max() )
@@ -114,7 +114,7 @@ def do_countuniq( df, group_cols, counted, agg_type='uint32', show_max=False, sh
     if show_agg:
         print( "\nCounting unqiue ", counted, " by ", group_cols ,  '... and saved in', agg_name )
     gp = df[group_cols+[counted]].groupby(group_cols)[counted].nunique().reset_index().rename(columns={counted:agg_name})
-    df = df.merge(gp, on=group_cols, how='left')
+    df = df.merge(gp, on=group_cols, how='left', copy=False)
     del gp
     if show_max:
         print( agg_name + " max value = ", df[agg_name].max() )
@@ -144,7 +144,7 @@ def do_mean( df, group_cols, counted, agg_type='float16', show_max=False, show_a
     if show_agg:
         print( "\nCalculating mean of ", counted, " by ", group_cols , '... and saved in', agg_name )
     gp = df[group_cols+[counted]].groupby(group_cols)[counted].mean().reset_index().rename(columns={counted:agg_name})
-    df = df.merge(gp, on=group_cols, how='left')
+    df = df.merge(gp, on=group_cols, how='left', copy=False)
     del gp
     if show_max:
         print( agg_name + " max value = ", df[agg_name].max() )
@@ -159,7 +159,7 @@ def do_var( df, group_cols, counted, agg_type='float16', show_max=False, show_ag
     if show_agg:
         print( "\nCalculating variance of ", counted, " by ", group_cols , '... and saved in', agg_name )
     gp = df[group_cols+[counted]].groupby(group_cols)[counted].var().reset_index().rename(columns={counted:agg_name})
-    df = df.merge(gp, on=group_cols, how='left')
+    df = df.merge(gp, on=group_cols, how='left', copy=False)
     del gp
     if show_max:
         print( agg_name + " max value = ", df[agg_name].max() )
@@ -352,8 +352,8 @@ def DO(frm,to,fileno):
     return sub
 
 
-FILENO= 33 #To distinguish the output file name3
-debug, gcloud = [0, 1]  #Whethere or not in debuging mode    
+# FILENO= 33 #To distinguish the output file name3
+debug, gcloud, FILENO = [0, 1, 1]  #Whethere or not in debuging mode    
 
 
 
@@ -385,10 +385,10 @@ else:
     test_nrows = 18790470
     val_size = 25000000
     # nchunk = 40000000
-    nchunk = 184000000 #from 78000000
-    frm = nrows - nchunk      
+    # nchunk = 184000000 #from 78000000
+    frm = 0   
 
-to = frm + nchunk
+to = nrows
 
 
 sub=DO(frm,to,FILENO)
