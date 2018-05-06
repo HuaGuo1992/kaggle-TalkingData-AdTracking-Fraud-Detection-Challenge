@@ -402,7 +402,7 @@ def DO(train_frm,train_to, test_nrows, groups, rategroup, fileno, initial_cols=[
     start_time = time.time()
 
     params = {
-        'learning_rate': 0.08, #0.2,
+        'learning_rate': 0.08,
         #'is_unbalance': 'true', # replaced with scale_pos_weight argument
         'num_leaves': 7,  # 2^max_depth - 1
         'max_depth': 3,  # -1 means no limit
@@ -542,7 +542,7 @@ def DO(train_frm,train_to, test_nrows, groups, rategroup, fileno, initial_cols=[
 
 
 
-debug, gcloud = [1, 0]
+debug, gcloud = [1, 1]
 
 
 
@@ -559,272 +559,31 @@ if debug:
 else:
     nrows = 184903891 - 1  
 
-    # val_size = 2500000
-    # nchunk = 40000000
-    # nchunk = 90000000 #from 78000000
-    # frm = nrows - nchunk
+    val_size = 10000000
+    nchunk = 40000000
+    # # nchunk = 90000000 #from 78000000
+    frm = nrows - nchunk
     test_nrows = 18790470
-    val_size = 25000000
-    # nchunk = 40000000
-    nchunk = 184000000 #from 78000000
-    frm = nrows - nchunk    
     
 to = frm + nchunk
 
 combination = [
-    # (
-    #     [
-    #         [['ip', 'channel'], 4],
-    #         [['app', 'channel'], 4],
-    #         [['ip', 'device', 'os', 'app'], 4],
-    #         [['ip', 'app', 'device', 'os'], 'NC']
-    #     ], 
-    #     [
-    #         # ['app', 'os'],
-    #         # ['app', 'channel'],
-    #         ['channel']
-    #     ],
-    #     'BC8',
-    #     ['ip', 'app','os', 'channel', 'device', 'hour'],
-    # ),
-    # (
-    #     [
-    #         [['ip', 'channel'], 4],
-    #         [['app', 'channel'], 4],
-    #         [['ip', 'device', 'os', 'app'], 4],
-    #         [['ip', 'app', 'device', 'os'], 'NC']
-    #     ], 
-    #     [
-    #         # ['app', 'os'],
-    #         ['app', 'channel'],
-    #         ['channel']
-    #     ],
-    #     'BC9',
-    #     ['ip', 'app','os', 'channel', 'device', 'hour'],
-    # ),
-    # (
-    #     [
-    #         [['ip', 'channel'], 4],
-    #         [['app', 'channel'], 4],
-    #         [['ip', 'device', 'os', 'app'], 4],
-    #         [['ip', 'app', 'device', 'os'], 'NC']
-    #     ], 
-    #     [
-    #         # ['app', 'os'],
-    #         ['app', 'channel'],
-    #         ['channel'],
-    #         ['app']
-    #     ],
-    #     'BC10',
-    #     ['ip', 'app','os', 'channel', 'device', 'hour'],
-    # ),    
     (
         [
             [['ip', 'channel'], 4],
             # [['app', 'channel'], 4],
             [['ip', 'device', 'os', 'app'], 4],
-            [['ip', 'app', 'device', 'os'], 'NC']
+            [['ip', 'app', 'device', 'os'], 'NC'],
+            [['device', 'os'], 4]
         ], 
         [
-            ['channel'],
+            # ['app', 'os'],
             # ['app', 'channel'],
-            # ['app'],           
-            # ['app', 'os'] 
-            # ['app', 'device']
+            ['channel']
         ],
-        'BC_all_data',
+        'base_line_v1',
         ['ip', 'app','os', 'channel', 'device', 'hour'],
-    ),  
-    # (
-    #     [ 
-    #         [['ip', 'channel'], 4],
-    #         [['app', 'channel'], 4],
-    #         [['ip', 'device', 'os', 'app'], 4],
-    #         [['ip', 'app', 'device', 'os'], 'NC']
-    #     ], 
-    #     [
-    #         # ['app', 'os'],
-    #         ['app', 'channel'],
-    #         ['channel'],
-    #         ['app'],          
-    #         # ['app', 'os']  
-    #         ['app', 'device'],
-    #         ['ip', 'channel']            
-    #     ],
-    #     'BC12',
-    #     ['ip', 'app','os', 'channel', 'device', 'hour'],
-    # )  ,
-    # (
-    #     [ 
-    #         [['ip', 'channel'], 4],
-    #         [['app', 'channel'], 4],
-    #         [['ip', 'device', 'os', 'app'], 4],
-    #         [['ip', 'app', 'device', 'os'], 'NC']
-    #     ], 
-    #     [
-    #         # ['app', 'os'],
-    #         ['app', 'channel'],
-    #         ['channel'],
-    #         ['app'],          
-    #         # ['app', 'os']  
-    #         # ['app', 'device'],
-    #         # ['ip', 'channel']            
-    #     ],
-    #     'BC13',
-    #     ['ip', 'app','os', 'channel', 'device', 'hour'],
-    # ) ,
-    # (
-    #     [
-    #         [['ip', 'channel'], 4],
-    #         [['app', 'channel'], 4],
-    #         [['ip', 'device', 'os', 'app'], 4],
-    #         [['ip', 'app', 'device', 'os'], 'NC']
-    #     ], 
-    #     [
-    #         # ['app', 'os'],
-    #         # ['app', 'channel'],
-    #         ['channel'],
-    #         ['ip']
-    #     ],
-    #     'BC14',
-    #     ['ip', 'app','os', 'channel', 'device', 'hour'],
-    # ),    
-    # (
-    #     [
-    #         [['ip', 'channel'], 4],
-    #         [['app', 'channel'], 4],
-    #         [['ip', 'device', 'os', 'app'], 4],
-    #         [['ip', 'app', 'device', 'os'], 'NC']
-    #     ], 
-    #     [
-    #         # ['app', 'os'],
-    #         # ['app', 'channel'],
-    #         ['channel'],
-    #         ['hour', 'device', 'os']
-    #     ],
-    #     'BC15',
-    #     ['ip', 'app','os', 'channel', 'device', 'hour'],
-    # ),  
-    # (
-    #     [
-    #         [['ip', 'channel'], 4],
-    #         [['app', 'channel'], 4],
-    #         [['ip', 'device', 'os', 'app'], 4],
-    #         [['ip', 'app', 'device', 'os'], 'NC']
-    #     ], 
-    #     [
-    #         # ['app', 'os'],
-    #         # ['app', 'channel'],
-    #         ['channel'],
-    #         ['device', 'os', 'channel']
-    #     ],
-    #     'BC16',
-    #     ['ip', 'app','os', 'channel', 'device', 'hour'],
-    # ), 
-    # (
-    #     [
-    #         [['ip', 'channel'], 4],
-    #         [['app', 'channel'], 4],
-    #         [['ip', 'device', 'os', 'app'], 4],
-    #         [['ip', 'app', 'device', 'os'], 'NC']
-    #     ], 
-    #     [
-    #         # ['app', 'os'],
-    #         # ['app', 'channel'],
-    #         ['channel'],
-    #         ['ip', 'channel', 'os']
-    #     ],
-    #     'BC17',
-    #     ['ip', 'app','os', 'channel', 'device', 'hour'],
-    # ),  
-    # (
-    #     [
-    #         [['ip', 'channel'], 4],
-    #         [['app', 'channel'], 4],
-    #         [['ip', 'device', 'os', 'app'], 4],
-    #         [['ip', 'app', 'device', 'os'], 'NC']
-    #     ], 
-    #     [
-    #         # ['app', 'os'],
-    #         # ['app', 'channel'],
-    #         ['channel'],
-    #         # ['device', 'os', 'channel']
-    #         ['device']
-    #     ],
-    #     'BC18',
-    #     ['ip', 'app','os', 'channel', 'device', 'hour'],
-    # ),
-    # (
-    #     [
-    #         [['ip', 'channel'], 4],
-    #         [['app', 'channel'], 4],
-    #         [['ip', 'device', 'os', 'app'], 4],
-    #         [['ip', 'app', 'device', 'os'], 'NC']
-    #     ], 
-    #     [
-    #         # ['app', 'os'],
-    #         # ['app', 'channel'],
-    #         ['channel'],
-    #         # ['device', 'os', 'channel']
-    #         ['os']
-    #     ],
-    #     'BC19',
-    #     ['ip', 'app','os', 'channel', 'device', 'hour'],
-    # ),   
-    # (
-    #     [
-    #         [['ip', 'channel'], 4],
-    #         [['app', 'channel'], 4],
-    #         [['ip', 'device', 'os', 'app'], 4],
-    #         [['ip', 'app', 'device', 'os'], 'NC']
-    #     ], 
-    #     [
-    #         # ['app', 'os'],
-    #         # ['app', 'channel'],
-    #         ['channel'],
-    #         # ['device', 'os', 'channel']
-    #         ['hour']
-    #     ],
-    #     'BC20',
-    #     ['ip', 'app','os', 'channel', 'device', 'hour'],
-    # ), 
-    # (
-    #     [
-    #         [['ip', 'channel'], 4],
-    #         [['app', 'channel'], 4],
-    #         [['ip', 'device', 'os', 'app'], 4],
-    #         [['ip', 'app', 'device', 'os'], 'NC'],
-    #         [['device', 'os'], 0],
-            
-    #     ], 
-    #     [
-    #         # ['app', 'os'],
-    #         # ['app', 'channel'],
-    #         ['channel']
-    #     ],
-    #     'BC21',
-    #     ['ip', 'app','os', 'channel', 'device', 'hour'],
-    # ), 
-    # (
-    #     [
-    #         [['ip', 'channel'], 4],
-    #         [['app', 'channel'], 4],
-    #         [['ip', 'device', 'os', 'app'], 4],
-    #         [['ip', 'app', 'device', 'os'], 'NC'],
-    #         # [['device', 'os'], 0],
-    #         [['device', 'os', 'channel'], 0]
-            
-    #     ], 
-    #     [
-    #         # ['app', 'os'],
-    #         # ['app', 'channel'],
-    #         ['channel']
-    #     ],
-    #     'BC22',
-    #     ['ip', 'app','os', 'channel', 'device', 'hour'],
-    # ),   
-
-                                         
+    ),                                       
 
 ]
 

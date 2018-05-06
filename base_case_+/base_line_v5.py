@@ -1,8 +1,10 @@
-# 在kernel2的importance 图基5础上取特征到device上面那个为止
 
 
 
-# k4 = k3+9千万数据
+#  base_case + 寻找最优参数
+#
+
+
 
 """
 A non-blending lightGBM model that incorporates portions and ideas from various public kernels
@@ -20,16 +22,9 @@ mpl.use('Agg')
 import matplotlib.pyplot as plt
 import os
 
-debug=0
-# inputpath = '../../'
-inputpath = '../data/'
-fileno = 'kernel4'
-
-if debug:
-    print('*** debug parameter set: this is a test run for debugging purposes ***')
 
 def lgb_modelfit_nocv(params, dtrain, dvalid, predictors, target='target', objective='binary', metrics='auc',
-                 feval=None, early_stopping_rounds=20, num_boost_round=3000, verbose_eval=10, categorical_features=None):
+                 feval=None, early_stopping_rounds=50, num_boost_round=4000, verbose_eval=10, categorical_features=None):
     lgb_params = {
         'boosting_type': 'gbdt',
         'objective': objective,
@@ -90,7 +85,8 @@ def lgb_modelfit_nocv(params, dtrain, dvalid, predictors, target='target', objec
 #===============================================Main Function==============================================================================================
 
 
-def DO(train_frm,train_to, test_nrows, fileno):
+def DO(train_frm,train_to, test_nrows, groups, rategroup, fileno, initial_cols=['ip', 'app','device','os', 'channel', 'hour']):
+    predictors=[]
     dtypes = {
             'ip'            : 'uint32',
             'app'           : 'uint16',
@@ -109,9 +105,64 @@ def DO(train_frm,train_to, test_nrows, fileno):
     #     test_df = pd.read_csv(inputpath+"test.csv", nrows=100000, parse_dates=['click_time'], dtype=dtypes, usecols=['ip','app','device','os', 'channel', 'click_time', 'click_id'])
     # else:
     test_df = pd.read_csv(inputpath+"test.csv", nrows=test_nrows, parse_dates=['click_time'], dtype=dtypes, usecols=['ip','app','device','os', 'channel', 'click_time', 'click_id'])
+    print('Extracting new features...')
+    train_df['hour'] = pd.to_datetime(train_df.click_time).dt.hour.astype('uint8')
+    test_df['hour'] = pd.to_datetime(test_df.click_time).dt.hour.astype('uint8')
 
+
+    # Find frequency of is_attributed for each unique value in column
+    freqs = {}
+    for cols in rategroups:
+        def rate_calculation(x):
+            """Calculate the attributed rate. Scale by confidence"""
+            rate = x.sum() / float(x.count())
+            conf = np.min([1, np.log(x.count()) / log_group])
+            return rate * conf        
+        
+        # New feature name
+        new_feature = '_'.join(cols)+'_confRate'  
+        predictors.append(new_feature)
+        filename = new_feature + '.csv'
+        if os.path.exists(filename):
+            gp=pd.read_csv(filename)
+            train_df = train_df.merge(gp, on=cols, how='left') 
+            test_df = test_df.merge(gp, on=cols, how='left') 
+        else:
+            # Perform the groupby
+            group_object = train_df.groupby(cols)
+            
+            # Group sizes    
+            group_sizes = group_object.size()
+            log_group = np.log(100000) # 1000 views -> 60% confidence, 100 views -> 40% confidence 
+            print(">> Calculating confidence-weighted rate for: {}.\n   Saving to: {}. Group Max /Mean / Median / Min: {} / {} / {} / {}".format(
+                cols, new_feature, 
+                group_sizes.max(), 
+                np.round(group_sizes.mean(), 2),
+                np.round(group_sizes.median(), 2),
+                group_sizes.min()
+            ))
+            
+            # Aggregation function
+            
+            gp = group_object['is_attributed'].apply(rate_calculation).reset_index().rename( index=str, columns={'is_attributed': new_feature})[cols + [new_feature]]
+            # Perform the merge
+            train_df = train_df.merge(gp, on=cols, how='left')
+            test_df = test_df.merge(gp, on=cols, how='left')
+            gp.to_csv(filename, index=False)
+            del gp 
+
+    print(train_df.shape)
+    gc.collect()
+
+    print('shape of train: ', train_df.shape)
+    print('shape of test: ', test_df.shape)
+    # print('train.head: ')
+    # print(train_df.head())
+    # print('test head: ')
+    # print(test_df.head())
     len_train = len(train_df)
     train_df=train_df.append(test_df)
+    # train_df = pd.concat([train_df, test_df], 0)
 
     del test_df
     gc.collect()
@@ -126,13 +177,11 @@ def DO(train_frm,train_to, test_nrows, fileno):
     #     else:
     #         df[col] = pd.to_datetime(df.click_time).dt.hour.astype('uint8')  
     #         df[col].to_csv(filename)         
+    # print('Preprocessing click_time...')
+    # train_df['click_time'] = (train_df['click_time'].astype(np.int64) // 10 ** 9).astype(np.int32)
 
-    print('Extracting new features...')
-    train_df['hour'] = pd.to_datetime(train_df.click_time).dt.hour.astype('uint8')
-    train_df['day'] = pd.to_datetime(train_df.click_time).dt.day.astype('uint8')
-    print('Preprocessing click_time...')
-    train_df['click_time'] = (train_df['click_time'].astype(np.int64) // 10 ** 9).astype(np.int32)
 
+    # train_df['day'] = pd.to_datetime(train_df.click_time).dt.day.astype('uint8')
     # extract_feature(train_df)
     # extract_feature(test_df)
     
@@ -153,30 +202,8 @@ def DO(train_frm,train_to, test_nrows, fileno):
     # tpye: 
     # 4: nunique 不同selctor 所对应unique value 的数量
     # 5: cumcont
-    predictors=[]
-    groups = [
-        # [['device', 'os'], 'NC'],
-        [['ip', 'app', 'device', 'os'], 'NC'],
-        # [['app', 'device', 'os'], 'NC'],
-        # [['device', 'os', 'channel'], 'NC'],
-        [['ip', 'channel'], 4],
-        # [['ip', 'device', 'os','app'],5],
-        [['ip', 'day', 'hour'], 4],
-        [['ip', 'app'], 4],
-        # [['ip', 'app', 'os'], 4],
-        [['ip', 'device'], 4],
-        # [['app', 'channel'], 4],
-        [['ip', 'os'], 5],
-        [['ip', 'device', 'os', 'app'], 4],
-        [['ip','day','hour','channel'], 0], 
-        [['ip', 'app', 'channel'], 0],
-        [['ip','app', 'os', 'channel'], 0],
-        # [['ip','day','channel', 'hour'], 6],
-        # [['ip','app', 'os', 'hour'], 6],
-        # [['ip','app', 'channel', 'day'], 6],
-        # [['ip','app', 'channel','hour'], 7],
+    
 
-    ]
     
 
     for i, item in enumerate(groups):
@@ -226,14 +253,20 @@ def DO(train_frm,train_to, test_nrows, fileno):
                 gp = train_df[selcols].groupby(by=selcols[0:-1])[selcols[-1]].mean().reset_index().rename(index=str, columns={selcols[-1]: colname})
                 train_df = train_df.merge(gp, on=selcols[0:-1], how='left')     
             if QQ == 'NC':
+                train_df['click_time'] = (train_df['click_time'].astype(np.int64) // 10 ** 9).astype(np.int32)                
                 gp = (train_df.groupby(selcols).click_time.shift(-1) - train_df.click_time).astype(np.float32)                 
                 train_df[colname] = gp
-            if not debug:
-                if QQ != 'NC':
+            # if not debug:
+            if QQ != 'NC':
+                if debug:
+                    gp.to_csv('test'+filename, index=False)
+                else:
                     gp.to_csv(filename,index=False)
             
         del gp
         gc.collect()   
+
+
 
     # train_df['click_time'] = (train_df['click_time'].astype(np.int64) // 10 ** 9).astype(np.int32)
     # train_df['NC'] = (train_df.groupby(['ip', 'app', 'device', 'os']).click_time.shift(-1) - train_df.click_time).astype(np.float32)
@@ -345,8 +378,8 @@ def DO(train_frm,train_to, test_nrows, fileno):
 
 
     ### 有问题 需要解决
-    predictors.extend(['app','os', 'channel', 'hour'])
-    categorical = ['app', 'os', 'channel', 'hour']
+    predictors.extend(initial_cols)
+    categorical = ['app', 'device', 'os', 'channel', 'hour']
     # for i in range(0,naddfeat):
     #     predictors.append('X'+str(i))
         
@@ -371,15 +404,19 @@ def DO(train_frm,train_to, test_nrows, fileno):
     params = {
         'learning_rate': 0.08,
         #'is_unbalance': 'true', # replaced with scale_pos_weight argument
-        'num_leaves': 7,  # 2^max_depth - 1
-        'max_depth': 3,  # -1 means no limit
-        'min_child_samples': 100,  # Minimum number of data need in a child(min_data_in_leaf)
+        'num_leaves': 216,  # 2^max_depth - 1
+        'max_depth': 58,  # -1 means no limit
+        'min_child_samples': 102,  # Minimum number of data need in a child(min_data_in_leaf)
         'max_bin': 100,  # Number of bucketed bin for feature values
-        'subsample': 0.7,  # Subsample ratio of the training instance.
-        'subsample_freq': 1,  # frequence of subsample, <=0 means no enable
-        'colsample_bytree': 0.9,  # Subsample ratio of columns when constructing each tree.
-        'min_child_weight': 0,  # Minimum sum of instance weight(hessian) needed in a child(leaf)
-        'scale_pos_weight':200 # because training data is extremely unbalanced 
+        'subsample': 0.8955675738687526,  # Subsample ratio of the training instance.
+        'subsample_freq': 6,  # frequence of subsample, <=0 means no enable
+        'colsample_bytree': 0.7260418406141875,  # Subsample ratio of columns when constructing each tree.
+        'min_child_weight': 33506.2591058567,  # Minimum sum of instance weight(hessian) needed in a child(leaf)
+        'scale_pos_weight':316, # because training data is extremely unbalanced 
+        'n_estimators': 682,
+        'reg_alpha': 0.00013708824735846336, 
+        'reg_lambda': 2.03991945845601e-09,
+        'subsample_for_bin': 246979,
     }
     (bst,best_iteration) = lgb_modelfit_nocv(params, 
                             train_df, 
@@ -399,18 +436,124 @@ def DO(train_frm,train_to, test_nrows, fileno):
     gc.collect()
     
     print('Plot feature importances...')
-    ax = lgb.plot_importance(bst, max_num_features=100)
+    fig = plt.figure(figsize=(20, 20))
+    ax = lgb.plot_importance(bst, max_num_features=100, figsize=(20, 15))
     # plt.show()
-    plt.savefig(str(fileno) + '_importance.png')
+    
+    plt.savefig(fileno+'_importance.png')
 
     print("Predicting...")
     sub['is_attributed'] = bst.predict(test_df[predictors],num_iteration=best_iteration)
-    if not debug:
-        print("writing...")
-        sub.to_csv('sub_it_{}.csv.gz'.format(str(fileno)),index=False,compression='gzip')
+    # if not debug:
+    print("writing...")
+    sub.to_csv('sub_{}.csv.gz'.format(str(fileno)),index=False,compression='gzip')
     print("done...")
     return sub
 
+
+#===============================================================================================================================================================
+
+    
+
+
+# groups = [
+#     # [
+# #         [['ip', 'app', 'device', 'os'], 'NC']
+# #         ],
+# # [
+# #     [['ip', 'app', 'device', 'os'], 'NC'], [['device', 'os'], 'NC']
+# # ],
+# # [
+# #     [['ip', 'device', 'os', 'app'], 4],
+# #     [['ip', 'app', 'device', 'os'], 'NC'],
+# #     [['device', 'os'], 'NC']
+# # ],
+# # [
+# #     [['ip', 'channel'], 4],
+# #     [['ip', 'device', 'os', 'app'], 4],
+# #     [['ip', 'app', 'device', 'os'], 'NC'],
+# #     [['device', 'os'], 'NC']
+# # ],
+# [[['ip', 'channel'], 4],
+#     [['app', 'channel'], 4],
+#     [['ip', 'device', 'os', 'app'], 4],
+#     [['ip', 'app', 'device', 'os'], 'NC']] 
+
+# ]
+
+
+
+
+# rategroups = [        
+#     # V1 Features #
+#     ###############
+#     # ['ip'], ['app'], ['device'], ['os'], ['channel'],
+    
+#     # # V2 Features #
+#     # ###############
+#     # ['app', 'channel'],
+#     ['app', 'os']
+#     # ['app', 'device'],
+    
+#     # # V3 Features #
+#     # ###############
+#     # ['channel', 'os'],
+#     # ['channel', 'device'],
+#     # ['os', 'device'],
+    
+#     # # Hua's version
+#     # ['ip', 'day'],
+#     # ['channel', 'day'],
+#     # ['os', 'day'],
+#     # ['app', 'day'],
+#     # ['ip', 'hour'],
+#     # ['channel', 'hour'],
+#     # ['os', 'hour'],
+#     # ['app', 'hour'], 
+#     # ['ip', 'channel', 'hour'],
+#     # ['ip', 'os', 'hour'] 
+
+# ]
+
+# filenos = [
+#     # 'BC1', 
+#     # 'BC2', 
+#     # 'BC3',
+#     #  'BC4', 
+#     #  'BC5'
+#     'BC7'
+#      ]
+
+# # groups = [
+# #     # [['ip', 'channel'], 4],
+# #     # [['ip', 'device', 'os','app'],5],
+# #     # [['ip', 'day', 'hour'], 4],
+# #     # [['ip', 'app'], 4],
+# #     # [['ip', 'app', 'os'], 4],
+# #     # [['ip', 'device'], 4],
+# #     # [['app', 'channel'], 4],
+# #     # [['ip', 'os'], 5],
+# #     # [['ip', 'device', 'os', 'app'], 4],
+# #     # [['ip','day','hour','channel'], 0], 
+# #     # [['ip', 'app', 'channel'], 0],
+# #     # [['ip','app', 'os', 'channel'], 0],
+# #     # [['ip','day','channel', 'hour'], 6],
+# #     # [['ip','app', 'os', 'hour'], 6],
+# #     # [['ip','app', 'channel', 'day'], 6],
+# #     # [['ip','app', 'channel','hour'], 7],
+# #     # [['ip', 'app', 'device', 'os'], 'NC']
+# # ]  
+
+
+
+debug, gcloud = [0, 1]
+
+
+
+if gcloud:
+    inputpath = '../data/'
+else:
+    inputpath = '../../'
 
 if debug:
     val_size = 10000
@@ -418,20 +561,37 @@ if debug:
     nchunk = 100000
     test_nrows = 100000
 else:
-    nrows = 184903891 - 1    
+    nrows = 184903891 - 1  
 
     val_size = 2500000
-    # nchunk = 40000000
-    nchunk = 90000000 #from 78000000
+    nchunk = 40000000
+    # # nchunk = 90000000 #from 78000000
     frm = nrows - nchunk
     test_nrows = 18790470
     
-    # val_size = 25000
-    # frm = 0
-    # nchunk = 100000
-    # test_nrows = 100000
-
-
 to = frm + nchunk
 
-sub=DO(frm,to,test_nrows, fileno)
+combination = [
+    (
+        [
+            [['ip', 'channel'], 4],
+            # [['app', 'channel'], 4],
+            [['ip', 'device', 'os', 'app'], 4],
+            [['ip', 'app', 'device', 'os'], 'NC'],
+            # [['device', 'os'], 4]
+        ], 
+        [
+            # ['app', 'os'],
+            # ['app', 'channel'],
+            ['channel']
+        ],
+        'base_line_v1_v4',
+        ['ip', 'app','os', 'channel', 'device', 'hour'],
+    ),  
+]
+
+
+
+
+for group, rategroups, fileno, initial_cols in combination:
+    sub=DO(frm,to,test_nrows, group, rategroups, fileno, initial_cols)
